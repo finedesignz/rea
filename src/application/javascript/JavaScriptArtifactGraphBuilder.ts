@@ -195,6 +195,14 @@ const graphLimitations = (
   );
   return [
     ...context.analysis.limitations,
+    ...context.snapshot.integrity_contradictions.map(
+      ({
+        logical_path: path,
+        declared_sha256: declared,
+        observed_sha256: observed,
+      }) =>
+        `Integrity contradiction recorded for ${path}: declared sha256 ${declared} but observed ${observed}; the observed bytes are untrusted and cannot support equivalence.`,
+    ),
     ...(relationshipOmissions.selfImports > 0
       ? [
           `${String(relationshipOmissions.selfImports)} import ${relationshipOmissions.selfImports === 1 ? "specifier" : "specifiers"} resolved back to the importing module itself and ${relationshipOmissions.selfImports === 1 ? "was" : "were"} omitted; application graph edges cannot be self-referential.`,

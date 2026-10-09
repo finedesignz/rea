@@ -288,7 +288,12 @@ declared by their tools. Artifact extraction materializes the selected regular
 files into a fresh REA-chosen temporary directory and reports its path.
 
 `analyze_javascript_application` reads the supplied local directory or ASAR path
-and returns its result and Evidence inline.
+and returns its result and Evidence inline. It accepts
+`integrity_policy` (`fail` by default, or `record-and-continue`), as described
+in [Integrity record-and-continue](#integrity-record-and-continue). Under
+`record-and-continue`, each contradicted entry (for example an unpacked native
+addon Authenticode-signed after ASAR packing) is added to the result
+`limitations` as an untrusted integrity contradiction and analysis continues.
 
 ## Integrity record-and-continue
 
