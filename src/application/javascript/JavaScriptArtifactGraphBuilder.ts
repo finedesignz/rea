@@ -130,7 +130,8 @@ const graphCoverage = (context: JavaScriptArtifactGraphContext) => {
     context.fileSet.invalid_utf8_files > 0 ||
     sourceMapPolicyGap ||
     malformedStructuredData ||
-    partialJavaScript;
+    partialJavaScript ||
+    context.snapshot.integrity_contradictions.length > 0;
   if (context.analysis.truncated_scopes > 0)
     return partialApplicationCoverage([], null);
   if (resourceLimits.length > 0)

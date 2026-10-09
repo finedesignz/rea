@@ -51,6 +51,7 @@ it("records the mismatch as an untrusted limitation and continues with record-an
   });
 
   expect(result.graph.nodes.length).toBeGreaterThan(0);
+  expect(result.graph.coverage.status).not.toBe("complete");
   const recorded = result.graph.limitations.filter((limitation) =>
     limitation.startsWith(
       "Integrity contradiction recorded for native/addon.node:",
