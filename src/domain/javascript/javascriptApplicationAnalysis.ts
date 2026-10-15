@@ -20,6 +20,7 @@ const countSchema = z.number().int().min(0);
 export const analyzeJavaScriptApplicationInputSchema = z.strictObject({
   input_path: localPathStringSchema,
   format: z.enum(["auto", "asar", "directory"]).default("auto"),
+  integrity_policy: z.enum(["fail", "record-and-continue"]).default("fail"),
 });
 
 /** Compact counts for the high-level Electron architecture/security surface. */

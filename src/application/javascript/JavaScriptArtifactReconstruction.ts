@@ -60,7 +60,10 @@ export const reconstructJavaScriptArtifact = async (
   abortIfNeeded(signal);
   const path = await realpath(input.input_path);
   const format = await resolveFormat(path, input);
-  const snapshot = await scanCanonicalArtifactInventory(path, { signal });
+  const snapshot = await scanCanonicalArtifactInventory(path, {
+    signal,
+    integrity: { mode: input.integrity_policy },
+  });
   if (snapshot.manifest.root_format !== format)
     throw new ArtifactReaderFailure(
       "format",
