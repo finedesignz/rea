@@ -10,6 +10,7 @@ import {
   isValidatedImmutableJavaScriptSemanticGraph,
   type JavaScriptSemanticGraph,
 } from "./javascriptSemanticGraph.js";
+import { integrityContradictionSchema } from "../artifactGraph.js";
 import { digestSchema } from "../digests.js";
 import { prefixedDigestSchema } from "../digests.js";
 import { localPathStringSchema } from "../localPath.js";
@@ -68,6 +69,7 @@ const applicationAnalysisResultShape = z.strictObject({
   inventory_manifest_id: prefixedDigestSchema("agm"),
   inventory_graph_sha256: digestSchema,
   graph: javascriptApplicationGraphSchema,
+  integrity_contradictions: z.array(integrityContradictionSchema).default([]),
   summary: electronBoundarySummarySchema,
   statistics: reconstructionStatisticsSchema,
   limitations: z.array(z.string().min(1)),
