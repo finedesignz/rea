@@ -15,6 +15,8 @@ npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --
 
 Use an extracted application directory or an ASAR as the target. Static
 JavaScript analysis returns the application graph and Evidence directly.
+Pass `--integrity-policy record-and-continue` to record integrity contradictions
+(returned in `integrity_contradictions`) instead of failing; the default is `fail`.
 Generic `rea analyze PATH` selects this workflow for directories and `.asar`
 files when neither `--provider` nor `--snapshot` is supplied. See
 [JavaScript artifact reconstruction](javascript-artifact-reconstruction.md)
