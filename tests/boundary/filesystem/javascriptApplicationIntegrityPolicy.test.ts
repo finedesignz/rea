@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -66,4 +67,56 @@ it("records the mismatch as an untrusted limitation and continues with record-an
     integrity_policy: "record-and-continue",
   });
   expect(evidence.ok).toBe(true);
+});
+
+const sha256 = (text: string): string =>
+  createHash("sha256").update(text).digest("hex");
+
+it("exposes structured integrity_contradictions and records the policy in Evidence", async () => {
+  const archive = await createSignedAfterPackAsar();
+
+  const evidence = await analyzeJavaScriptApplication({
+    input_path: archive,
+    format: "asar",
+    integrity_policy: "record-and-continue",
+  });
+
+  expect(evidence.ok).toBe(true);
+  if (!evidence.ok) return;
+  expect(evidence.value.parameters).toMatchObject({
+    integrity_policy: "record-and-continue",
+  });
+  const result = evidence.value.normalized_result as unknown as {
+    readonly integrity_contradictions: readonly Record<string, unknown>[];
+  };
+  expect(result.integrity_contradictions).toHaveLength(1);
+  expect(result.integrity_contradictions[0]).toMatchObject({
+    logical_path: "native/addon.node",
+    declared_sha256: sha256("unsigned-addon"),
+    observed_sha256: sha256("unsigned-addon-with-authenticode-signature"),
+    trust: "observed-untrusted",
+  });
+});
+
+it("records the fail policy and an empty contradiction list for a default clean run", async () => {
+  const root = await createTestTempDirectory("rea-js-integrity-clean-");
+  await mkdir(join(root, "app"), { recursive: true });
+  await writeFile(join(root, "app", "package.json"), '{"main":"main.js"}\n');
+  await writeFile(join(root, "app", "main.js"), "console.log('ok');\n");
+
+  const evidence = await analyzeJavaScriptApplication({
+    input_path: join(root, "app"),
+    format: "directory",
+  });
+
+  expect(evidence.ok).toBe(true);
+  if (!evidence.ok) return;
+  expect(evidence.value.parameters).toMatchObject({ integrity_policy: "fail" });
+  expect(
+    (
+      evidence.value.normalized_result as unknown as {
+        integrity_contradictions: unknown[];
+      }
+    ).integrity_contradictions,
+  ).toEqual([]);
 });

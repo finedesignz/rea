@@ -293,7 +293,10 @@ and returns its result and Evidence inline. It accepts
 in [Integrity record-and-continue](#integrity-record-and-continue). Under
 `record-and-continue`, each contradicted entry (for example an unpacked native
 addon Authenticode-signed after ASAR packing) is added to the result
-`limitations` as an untrusted integrity contradiction and analysis continues.
+`limitations` and returned structurally in the result `integrity_contradictions`
+array (same shape as `inspect_artifact`; empty when none), coverage stays
+partial, and analysis continues. The Evidence `parameters` record the selected
+`integrity_policy`.
 
 ## Integrity record-and-continue
 

@@ -2,6 +2,7 @@ import { lstat, realpath } from "node:fs/promises";
 
 import { ArtifactReaderFailure } from "../../artifacts/ArtifactReader.js";
 import { createJavaScriptArtifactReader as createReader } from "../../artifacts/javascript/JavaScriptArtifactReader.js";
+import type { IntegrityContradiction } from "../../domain/artifactGraph.js";
 import type { JavaScriptApplicationGraph } from "../../domain/javascript/javascriptApplicationGraph.js";
 import type { JavaScriptSemanticGraph } from "../../domain/javascript/javascriptSemanticGraph.js";
 import type { ElectronBoundarySummary } from "../../domain/javascript/javascriptApplicationAnalysis.js";
@@ -29,6 +30,7 @@ export interface JavaScriptArtifactReconstructionResult {
   readonly inventory_manifest_id: string;
   readonly inventory_graph_sha256: string;
   readonly graph: JavaScriptApplicationGraph;
+  readonly integrity_contradictions: readonly IntegrityContradiction[];
   readonly semantic_graph: JavaScriptSemanticGraph;
   readonly electron_summary: ElectronBoundarySummary;
   readonly statistics: {
@@ -139,6 +141,7 @@ export const reconstructJavaScriptArtifact = async (
       inventory_manifest_id: snapshot.manifest.manifest_id,
       inventory_graph_sha256: snapshot.manifest.graph_sha256,
       graph,
+      integrity_contradictions: snapshot.integrity_contradictions,
       semantic_graph: semanticGraph,
       electron_summary: summarizeElectronBoundaries(analysis),
       statistics: {
